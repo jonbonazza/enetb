@@ -11,4 +11,5 @@ all:
 	$(CC) $(CFLAGS) $(C_INCLUDES) -g -fPIC -Isrc/ -c src/*.c 
 	$(AR) lib/libenet.a *.o
 	$(RM) $(ALL_O)
+	go install
 	
