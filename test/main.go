@@ -28,7 +28,7 @@ func main() {
 }
 
 func server(sig chan os.Signal) {
-	host, err := enet.NewHost("127.0.0.1:8080", 32)
+	host, err := enet.NewHost("127.0.0.1:8080", 32, 2)
 	if err != nil {
 		panic(err)
 	}
@@ -38,18 +38,19 @@ func server(sig chan os.Signal) {
 }
 
 func client(sig chan os.Signal) {
-	host, err := enet.NewHost("", 1)
+	host, err := enet.NewHost("", 1, 2)
 	if err != nil {
 		panic(err)
 	}
 	go poll(host)
+	rand.Seed(time.Now().Unix())
 	id := rand.Int()
 	peer, err := enet.Connect(host, "127.0.0.1:8080", 3, uint32(id))
 	if err != nil {
 		panic(err)
 	}
 	defer func() {
-		peer.Disconnect(0)
+		peer.Disconnect()
 		host.Flush()
 		time.Sleep(100 * time.Millisecond)
 		host.Destroy()
@@ -71,11 +72,11 @@ func poll(host *enet.Host) {
 func handleEvent(e *enet.Event) {
 	switch e.EventType {
 	case enet.EventTypeConnect:
-		fmt.Println("Connect")
+		fmt.Println("Connect", e.EventData)
 	case enet.EventTypeDisconnect:
-		fmt.Println("Disconnect")
+		fmt.Println("Disconnect", e.EventData)
 	case enet.EventTypeReceive:
 		fmt.Println("Receive")
-		fmt.Println(string(e.Data))
+		fmt.Println(string(e.Data), e.EventData)
 	}
 }

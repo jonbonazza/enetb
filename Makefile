@@ -9,6 +9,7 @@ C_INCLUDES= -Isrc/
 
 all:
 	$(CC) $(CFLAGS) $(C_INCLUDES) -g -fPIC -Isrc/ -c src/*.c 
+	mkdir -p ./lib
 	$(AR) lib/libenet.a *.o
 	$(RM) $(ALL_O)
 	go install
